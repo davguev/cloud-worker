@@ -29,6 +29,9 @@ def test2(arg):
         return
     try:
         client = None
+        s3res = boto3.resource('s3')
+        s3cli = boto3.client('s3')
+        print(str(response))
         res = boto3.resource("sqs")
         queue_url = os.environ["URL_SQS"]
         # Receive message from SQS queue
@@ -52,23 +55,26 @@ def test2(arg):
                     { "$set": { "status": "E" } }
                 )
                 video = str(videoObj["video"])
-                video = path_videos + video
-                print("RUTA POST " + video)
-                carpeta_archivo = os.path.split(os.path.abspath(video))
+                carpeta_archivo = video.split("/")
                 carpeta = carpeta_archivo[0]
                 archivo = carpeta_archivo[1]
-                destino = carpeta + "/converted/" + (archivo.rsplit(".", 1)[0] + '.mp4')
+                s3res.Bucket(os.environ["BUCKET"]).download_file(video, archivo)
+                destino = carpeta + "/converted/c_" + (archivo.rsplit(".", 1)[0] + '.mp4')
+                archivo_destino = "c_" + (archivo.rsplit(".", 1)[0] + ".mp4"
                 #destino = "/home/SIS/fd.guevara1054/Videos/" + str(segundos) + "_" + record.rsplit(".", 1)[0] + "_" + fechaInicial.strftime("%Y%m%d-%H:%M:%S") + "_" + fechaConversion.strftime("%Y%m%d-%H:%M:%S") + ".mp4"
                 ff = ffmpy.FFmpeg(
-                    inputs={video: None},
-                    outputs={destino: "-y -c:v libx264 -c:a aac -strict -2 -preset ultrafast"}
+                    inputs={archivo: None},
+                    outputs={archivo_destino: "-y -c:v libx264 -c:a aac -strict -2 -preset ultrafast"}
                 )
                 print("COMANDO: " + ff.cmd)
                 ff.run() 
+                s3cli.upload_file(archivo_destino, os.environ["BUCKET"], destino, ExtraArgs={'ACL':'public-read'})
                 videos.update_one(
                     { "id": id },
                     { "$set": { "status": "T", "converted_video": "videos/converted/" + (archivo.rsplit(".", 1)[0] + '.mp4') } }
                 )
+                os.remove(archivo)
+                os.remove(archivo_destino)
                 #mensaje.delete()
                 SENDER = os.environ["MAIL_USER"]
                 SENDERNAME = 'SmartTools'
