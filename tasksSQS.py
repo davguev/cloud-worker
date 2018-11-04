@@ -14,6 +14,10 @@ from email.mime.multipart import MIMEMultipart as mp
 
 app = Celery()
 
+BROKER_URL_PARAM = os.environ.get("REDIS_URL", "redis://")
+CELERY_RESULT_BACKEND_PARAM = os.environ.get("REDIS_URL", "redis://")
+app.conf.update(BROKER_URL=BROKER_URL_PARAM, CELERY_RESULT_BACKEND=CELERY_RESULT_BACKEND_PARAM)
+
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
     # Transformar archivos cada X segundos
