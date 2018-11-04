@@ -65,7 +65,7 @@ def test2(arg):
                     { "id": id },
                     { "$set": { "status": "T", "converted_video": "videos/converted/" + (archivo.rsplit(".", 1)[0] + '.mp4') } }
                 )
-                mensaje.delete()
+                #mensaje.delete()
                 SENDER = os.environ["MAIL_USER"]
                 SENDERNAME = 'SmartTools'
                 RECIPIENT  = videoObj["email"]
