@@ -1,1 +1,1 @@
-worker: celery -A tasksTest worker -B --loglevel=info
+worker: celery -A tasksSQS worker -B --loglevel=info
