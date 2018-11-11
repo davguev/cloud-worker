@@ -43,7 +43,11 @@ def test2(arg):
             id = int(mensaje.body)
             os.environ["TRANSFORMANDO"] = "SI"
             path_videos = os.environ["PATH_VIDEOS"]
-            client = MongoClient(os.environ["DB_HOSTNAME"], int(os.environ["DB_PORT"]))
+            client = MongoClient(os.environ["DB_HOSTNAME"] + ":" + os.environ["DB_PORT"],
+                                 username=os.environ["DB_USER"],
+                                 password=os.environ["DB_PASSWORD"],
+                                 authSource=os.environ["DB_NAME"],
+                                 authMechanism="SCRAM-SHA-1")
             db = client[os.environ["DB_NAME"]]
             videos = db.publications_publication
             concursos = db.contests_contest
@@ -81,35 +85,11 @@ def test2(arg):
                 from_email = Email("smarttools08@gmail.com")
                 subject = "¡Tu video está listo para ver!"
                 to_email = Email(videoObj["email"])
-                #SENDER = os.environ["MAIL_USER"]
-                #SENDERNAME = 'SmartTools'
-                #RECIPIENT  = videoObj["email"]
-                #USERNAME_SMTP = os.environ["SMTP_USER"]
-                #PASSWORD_SMTP = os.environ["SMTP_PASS"]
-                #HOST = "email-smtp.us-east-1.amazonaws.com"
-                #PORT = 587
-                #SUBJECT = '¡Tu video está listo para ver!'
-                #gmail_user = 'smarttools08@gmail.com'  
                 concursoObj = concursos.find_one({"id":videoObj["contest_id"]})
                 concurso = concursoObj["name"]
                 url = concursoObj["url"]
                 usuario = videoObj["first_name"]
-                #BODY_TEXT = ("¡Hola, " + usuario + "! \n\n El video que postulaste para el concurso " + concurso + " está listo para ser visualizado en el portal. El enlace al concurso es " + os.environ["APP_URL"] + url + ".\n\n ¡Mucha suerte!"
-                #        )
-                #msg = mp('alternative')
-                #msg['Subject'] = SUBJECT
-                #msg['From'] = email.utils.formataddr((SENDERNAME, SENDER))
-                #msg['To'] = RECIPIENT
-                #part1 = text(BODY_TEXT, 'plain')
-                #msg.attach(part1)
-                #server = smtplib.SMTP(HOST, PORT)
-                #server.ehlo()
-                #server.starttls()
-                #server.ehlo()
-                #server.login(USERNAME_SMTP, PASSWORD_SMTP)
-                #server.sendmail(SENDER, RECIPIENT, msg.as_string())
-                #server.close()
-                content = Content("text/plain", "¡Hola, " + usuario + "! \n\n El video que postulaste para el concurso " + concurso + " está listo para ser visualizado en el portal. El enlace al concurso es " + os.environ["APP_URL"] + url + ".\n\n ¡Mucha suerte!")
+                content = Content("text/html", "¡Hola, " + usuario + "! <br><br> El video que postulaste para el concurso " + concurso + " está listo para ser visualizado en el portal. El enlace al concurso es " + os.environ["APP_URL"] + url + ".<br><br> ¡Mucha suerte!")
                 mail = Mail(from_email, subject, to_email, content)
                 response = sg.client.mail.send.post(request_body=mail.get())
                 print(response.status_code)
