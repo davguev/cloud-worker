@@ -81,7 +81,7 @@ def test2(arg):
                 )
                 os.remove(archivo)
                 os.remove(archivo_destino)
-                #mensaje.delete()
+                mensaje.delete()
                 sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
                 from_email = Email("smarttools08@gmail.com")
                 subject = "¡Tu video está listo para ver!"
