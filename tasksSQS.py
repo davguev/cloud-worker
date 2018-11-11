@@ -34,7 +34,6 @@ def test2(arg):
         client = None
         s3res = boto3.resource('s3')
         s3cli = boto3.client('s3')
-        print(str(response))
         res = boto3.resource("sqs")
         queue_url = os.environ["URL_SQS"]
         # Receive message from SQS queue
