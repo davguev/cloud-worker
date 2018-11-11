@@ -23,7 +23,7 @@ app.conf.update(BROKER_URL=BROKER_URL_PARAM, CELERY_RESULT_BACKEND=CELERY_RESULT
 def setup_periodic_tasks(sender, **kwargs):
     # Transformar archivos cada X segundos
     sender.add_periodic_task(30.0, test2.s("hello"), name='add every 5')
-    
+
 @app.task
 def test2(arg):
     if os.environ["TRANSFORMANDO"] == "SI":
