@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from celery import Celery
 from celery.schedules import crontab
 from pymongo import MongoClient
@@ -64,8 +66,8 @@ def test2(arg):
                 carpeta = carpeta_archivo[0]
                 archivo = carpeta_archivo[1]
                 s3res.Bucket(os.environ["BUCKET"]).download_file(video, archivo)
-                destino = carpeta + "/converted/c_" + (archivo.rsplit(".", 1)[0] + '.mp4')
-                archivo_destino = "c_" + (archivo.rsplit(".", 1)[0] + ".mp4"
+                destino = carpeta + "/converted/c_" + (archivo.rsplit(".", 1)[0]) + '.mp4'
+                archivo_destino = "c_" + (archivo.rsplit(".", 1)[0]) + ".mp4"
                 #destino = "/home/SIS/fd.guevara1054/Videos/" + str(segundos) + "_" + record.rsplit(".", 1)[0] + "_" + fechaInicial.strftime("%Y%m%d-%H:%M:%S") + "_" + fechaConversion.strftime("%Y%m%d-%H:%M:%S") + ".mp4"
                 ff = ffmpy.FFmpeg(
                     inputs={archivo: None},
